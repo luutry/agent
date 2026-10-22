@@ -1,0 +1,26 @@
+[
+  {
+    "userId": "manager_001",
+    "role": "hr_admin",
+    "managedOrgIds": ["DEPT_TECH", "DEPT_HR", "DEPT_FIN"],
+    "permissions": ["employee:view", "team:view", "org:view", "performance:view"]
+  },
+  {
+    "userId": "manager_tech",
+    "role": "manager",
+    "managedOrgIds": ["DEPT_TECH"],
+    "permissions": ["employee:view", "team:view", "org:view", "performance:view"]
+  },
+  {
+    "userId": "manager_hr",
+    "role": "manager",
+    "managedOrgIds": ["DEPT_HR"],
+    "permissions": ["employee:view", "team:view", "org:view", "performance:view"]
+  },
+  {
+    "userId": "manager_fin",
+    "role": "manager",
+    "managedOrgIds": ["DEPT_FIN"],
+    "permissions": ["employee:view", "team:view", "org:view", "performance:view"]
+  }
+]

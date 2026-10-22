@@ -1,0 +1,31 @@
+package com.luutry.agent.repository.entity.employee;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("hr_employee_education")
+public class EmployeeEducation {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private Long employeeId;
+    private String schoolName;
+    private String major;
+    private String education;
+    private String degree;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+    @TableLogic
+    private Integer deleted;
+}

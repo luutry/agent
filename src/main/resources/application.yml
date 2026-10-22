@@ -1,0 +1,106 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: luutry-agent
+  # DataSource配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/hr_data?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # redis:
+  #   host: localhost
+  #   port: 6379
+
+# MyBatis-Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# ==================== Agent 清洗策略配置 ====================
+# 阈值由上线后查询长度分布指标（P95/P99）驱动调整
+agent:
+  clean-policy:
+    # WARN 截断阈值：清洗后文本超过此长度标记 truncated=true
+    warn-threshold-chars: 1500
+    # HARD 拒答阈值：原始输入超过此长度标记 hardRejected=true（由上游决定是否拒答）
+    hard-reject-threshold-chars: 2000
+    # ReDoS 防护硬截断倍数：硬截断上限 = warnThresholdChars × 此倍数
+    hard-limit-multiplier: 4
+    # 语义边界回退搜索窗口：截断点附近向前搜索句子/词边界的最大字符数
+    semantic-boundary-chars: 50
+
+# ==================== Agent 指代消解策略配置 ====================
+# 阈值由上线后的消解触发率、LLM准确率、平均耗时等指标驱动调整
+  resolve-policy:
+    # LLM消解最低可接受置信度（低于此值降级返回原文）
+    min-llm-confidence: 0.85
+    # LLM调用超时时间（毫秒），超时后降级返回原文
+    llm-timeout-ms: 1500
+    # 传递给LLM的最大历史字符数（控制 prompt token 消耗）
+    max-history-chars: 1000
+    # 规则快速路径高置信度模式（仅这些模式走规则直接替换，其余走LLM）
+    high-confidence-patterns:
+      - "该员工"
+      - "该部门"
+      - "该团队"
+      - "刚才那些"
+      - "刚才的"
+
+# ==================== Agent 意图分类策略配置（V3 Embedding + 线性头） ====================
+# 核心转变：从关键词投票 → Embedding语义编码 + 线性分类头
+  intent-classification:
+    # Embedding 模型名称
+    embedding-model: "text-embedding-v3"
+    # Embedding 向量维度
+    embedding-dim: 1024
+    # 置信度阈值（最高概率低于此值视为不确定）
+    confidence-threshold: 0.5
+    # MIXED 意图阈值（TOOL 和 RAG 概率均 ≥ 此值时判定 MIXED）
+    mixed-threshold: 0.3
+    # Embedding 调用超时（毫秒）
+    embedding-timeout-ms: 2000
+    # 权重矩阵由 classpath:intent-weights.json 独立加载（IntentWeightsLoader）
+    # 种子训练数据（冷启动用，各类别代表性查询）
+    tool-seeds:
+      - query: "查看研发部门员工绩效"
+      - query: "团队有多少人"
+      - query: "离职人员名单"
+      - query: "盘点团队人员结构"
+      - query: "谁最近入职了"
+      - query: "看看张三的档案"
+    rag-seeds:
+      - query: "绩效制度是什么"
+      - query: "离职流程怎么规定"
+      - query: "考勤规定有哪些"
+      - query: "晋升条件是什么"
+      - query: "请假流程怎么走"
+      - query: "调岗需要什么条件"
+    mixed-seeds:
+      - query: "查看员工绩效并对比制度标准"
+      - query: "团队离职率和离职制度"
+    chitchat-seeds:
+      - query: "你好"
+      - query: "谢谢"
+      - query: "再见"
+
+# ==================== LLM Qwen Configuration ====================
+llm:
+  qwen:
+    api-key: "sk-ws-H.PXLEHII.IrR8.MEUCIQDACVS-2Md9R80_Y6-c3Is8tWXOqtkFwapBA6VDmNIucQIgTvc0egzj7mhaf-uYj0V2mLaOioKt1Cdqn5y3XiBckfk"
+    model-name: "qwen-plus"
+    embedding-model-name: "text-embedding-v3"
+    base-url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    temperature: 0.7
+    max-tokens: 2048
+    timeout-seconds: 60
+
+# 日志配置
+logging:
+  level:
+    com.luutry.agent: INFO
+    org.springframework: WARN

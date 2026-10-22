@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR管理者智能Agent</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-bg: #eef2ff;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --user-bubble: #4f46e5;
+            --agent-bubble: #f1f5f9;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            z-index: 10;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-logo {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 16px;
+        }
+        .header-title { font-size: 18px; font-weight: 600; }
+        .header-subtitle { font-size: 12px; color: var(--text-secondary); }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--success);
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.offline { background: var(--danger); animation: none; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .status-text { font-size: 13px; color: var(--text-secondary); }
+
+        /* ===== Config Bar ===== */
+        .config-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .config-group { display: flex; align-items: center; gap: 6px; }
+        .config-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; white-space: nowrap; }
+        .config-input {
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 160px;
+        }
+        .config-input:focus { border-color: var(--primary); }
+        .config-btn {
+            padding: 5px 14px;
+            border: 1px solid var(--primary);
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .config-btn:hover { background: var(--primary-light); border-color: var(--primary-light); }
+        .config-btn.outline { background: transparent; color: var(--primary); }
+        .config-btn.outline:hover { background: var(--primary-bg); }
+
+        /* ===== Chat Area ===== */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-container::-webkit-scrollbar { width: 6px; }
+        .chat-container::-webkit-scrollbar-track { background: transparent; }
+        .chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+        .welcome-msg {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        .welcome-msg h2 { font-size: 22px; color: var(--text); margin-bottom: 8px; }
+        .welcome-msg p { font-size: 14px; line-height: 1.8; }
+        .welcome-examples {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            justify-content: center; margin-top: 20px;
+        }
+        .example-chip {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+        .example-chip:hover {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        /* ===== Message Bubbles ===== */
+        .message { display: flex; gap: 10px; max-width: 80%; }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+        .message.agent { align-self: flex-start; }
+
+        .avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 600; flex-shrink: 0;
+        }
+        .message.user .avatar { background: var(--user-bubble); color: white; }
+        .message.agent .avatar { background: var(--primary-bg); color: var(--primary); }
+
+        .bubble {
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            line-height: 1.7;
+            word-break: break-word;
+            box-shadow: var(--shadow);
+        }
+        .message.user .bubble {
+            background: var(--user-bubble);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .message.agent .bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* ===== Metadata Tags ===== */
+        .meta-row {
+            display: flex; flex-wrap: wrap; gap: 6px;
+            margin-top: 8px; padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+        .meta-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .tag-pass { background: #d1fae5; color: #065f46; }
+        .tag-warning { background: #fef3c7; color: #92400e; }
+        .tag-reject { background: #fee2e2; color: #991b1b; }
+        .tag-source { background: var(--primary-bg); color: var(--primary); }
+        .tag-rounds { background: #f1f5f9; color: #475569; }
+        .tag-confidence { background: #f0fdf4; color: #166534; }
+
+        /* ===== Issues ===== */
+        .issues-list {
+            margin-top: 8px; padding: 8px 12px;
+            background: #fffbeb; border: 1px solid #fde68a;
+            border-radius: 8px; font-size: 12px; color: #92400e;
+        }
+        .issues-list li { margin-left: 16px; line-height: 1.6; }
+
+        /* ===== Structured Data ===== */
+        .data-panel {
+            margin-top: 8px;
+        }
+        .data-toggle {
+            font-size: 12px; color: var(--primary); cursor: pointer;
+            border: none; background: none; padding: 4px 0;
+            text-decoration: underline;
+        }
+        .data-content {
+            display: none;
+            margin-top: 6px; padding: 10px;
+            background: #f8fafc; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 12px;
+            font-family: 'Cascadia Code', 'Fira Code', monospace;
+            white-space: pre-wrap; word-break: break-all;
+            max-height: 200px; overflow-y: auto;
+            color: var(--text);
+        }
+        .data-content.show { display: block; }
+
+        /* ===== Loading ===== */
+        .typing-indicator {
+            display: flex; gap: 4px; padding: 12px 16px;
+            align-items: center;
+        }
+        .typing-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--primary-light);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* ===== Input Area ===== */
+        .input-area {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 16px 24px;
+            box-shadow: 0 -1px 3px rgba(0,0,0,0.04);
+        }
+        .input-wrapper {
+            display: flex; gap: 10px; align-items: flex-end;
+            max-width: 900px; margin: 0 auto;
+        }
+        .input-box {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+            min-height: 42px;
+            max-height: 120px;
+            line-height: 1.5;
+        }
+        .input-box:focus { border-color: var(--primary); }
+        .input-box::placeholder { color: #94a3b8; }
+        .send-btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            height: 42px;
+        }
+        .send-btn:hover { background: var(--primary-light); }
+        .send-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        /* ===== Error Toast ===== */
+        .toast {
+            position: fixed; top: 20px; right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: white;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: var(--danger); }
+        .toast.success { background: var(--success); }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .message { max-width: 92%; }
+            .config-bar { padding: 8px 12px; }
+            .chat-container { padding: 12px; }
+            .input-area { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <div class="header-logo">HR</div>
+        <div>
+            <div class="header-title">HR管理者智能Agent</div>
+            <div class="header-subtitle">RAG + Memory + Tool | ReAct范式</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">检测中...</span>
+    </div>
+</div>
+
+<!-- Config Bar -->
+<div class="config-bar">
+    <div class="config-group">
+        <span class="config-label">用户ID：</span>
+        <input type="text" class="config-input" id="userId" value="manager_001" placeholder="管理者ID">
+    </div>
+    <div class="config-group">
+        <span class="config-label">会话ID：</span>
+        <input type="text" class="config-input" id="sessionId" value="" placeholder="自动生成">
+    </div>
+    <div class="config-group">
+        <span class="config-label">API地址：</span>
+        <input type="text" class="config-input" id="apiBase" value="http://localhost:8080" style="width:200px">
+    </div>
+    <button class="config-btn outline" onclick="clearChat()">清空对话</button>
+    <button class="config-btn" onclick="newSession()">新会话</button>
+</div>
+
+<!-- Chat Area -->
+<div class="chat-container" id="chatContainer">
+    <div class="welcome-msg" id="welcomeMsg">
+        <h2>欢迎使用 HR 管理者智能Agent</h2>
+        <p>支持团队盘点、人员检索、员工档案、人力指标看板、绩效查询、人事制度问答</p>
+        <div class="welcome-examples">
+            <div class="example-chip" onclick="sendExample(this)">查看产品部团队人员结构</div>
+            <div class="example-chip" onclick="sendExample(this)">检索绩效A级的5年以上员工</div>
+            <div class="example-chip" onclick="sendExample(this)">本月各部门离职率是多少</div>
+            <div class="example-chip" onclick="sendExample(this)">员工张三的完整档案</div>
+            <div class="example-chip" onclick="sendExample(this)">考勤制度怎么规定的</div>
+            <div class="example-chip" onclick="sendExample(this)">晋升需要满足什么条件</div>
+        </div>
+    </div>
+</div>
+
+<!-- Input Area -->
+<div class="input-area">
+    <div class="input-wrapper">
+        <textarea class="input-box" id="inputBox" placeholder="输入您的问题... (Enter发送, Shift+Enter换行)" rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">发送</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+    // ===== State =====
+    let conversationHistory = [];
+    let isLoading = false;
+
+    // ===== Init =====
+    (function init() {
+        generateSessionId();
+        checkHealth();
+        setInterval(checkHealth, 30000);
+        autoResizeTextarea();
+    })();
+
+    function generateSessionId() {
+        const id = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        document.getElementById('sessionId').value = id;
+    }
+
+    function newSession() {
+        generateSessionId();
+        clearChat();
+        showToast('新会话已创建', 'success');
+    }
+
+    function clearChat() {
+        conversationHistory = [];
+        const container = document.getElementById('chatContainer');
+        container.innerHTML = `
+            <div class="welcome-msg" id="welcomeMsg">
+                <h2>欢迎使用 HR 管理者智能Agent</h2>
+                <p>支持团队盘点、人员检索、员工档案、人力指标看板、绩效查询、人事制度问答</p>
+                <div class="welcome-examples">
+                    <div class="example-chip" onclick="sendExample(this)">查看产品部团队人员结构</div>
+                    <div class="example-chip" onclick="sendExample(this)">检索绩效A级的5年以上员工</div>
+                    <div class="example-chip" onclick="sendExample(this)">本月各部门离职率是多少</div>
+                    <div class="example-chip" onclick="sendExample(this)">员工张三的完整档案</div>
+                    <div class="example-chip" onclick="sendExample(this)">考勤制度怎么规定的</div>
+                    <div class="example-chip" onclick="sendExample(this)">晋升需要满足什么条件</div>
+                </div>
+            </div>`;
+    }
+
+    // ===== Health Check =====
+    async function checkHealth() {
+        const dot = document.getElementById('statusDot');
+        const text = document.getElementById('statusText');
+        try {
+            const apiBase = document.getElementById('apiBase').value;
+            const resp = await fetch(apiBase + '/api/agent/health', { method: 'POST' });
+            if (resp.ok) {
+                dot.className = 'status-dot';
+                text.textContent = '服务在线';
+            } else {
+                throw new Error('non-ok');
+            }
+        } catch {
+            dot.className = 'status-dot offline';
+            text.textContent = '服务离线';
+        }
+    }
+
+    // ===== Send Message =====
+    function sendExample(el) {
+        document.getElementById('inputBox').value = el.textContent;
+        sendMessage();
+    }
+
+    async function sendMessage() {
+        if (isLoading) return;
+        const input = document.getElementById('inputBox');
+        const query = input.value.trim();
+        if (!query) return;
+
+        const userId = document.getElementById('userId').value.trim();
+        const sessionId = document.getElementById('sessionId').value.trim();
+        const apiBase = document.getElementById('apiBase').value.trim();
+
+        if (!userId || !sessionId) {
+            showToast('请填写用户ID和会话ID', 'error');
+            return;
+        }
+
+        // Remove welcome message
+        const welcome = document.getElementById('welcomeMsg');
+        if (welcome) welcome.remove();
+
+        // Add user bubble
+        appendMessage('user', query);
+        conversationHistory.push(query);
+        input.value = '';
+        input.style.height = 'auto';
+
+        // Show loading
+        isLoading = true;
+        document.getElementById('sendBtn').disabled = true;
+        const loadingEl = appendLoading();
+
+        try {
+            const response = await fetch(apiBase + '/api/agent/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: query,
+                    userId: userId,
+                    sessionId: sessionId,
+                    history: conversationHistory.slice(0, -1)
+                })
+            });
+
+            removeLoading(loadingEl);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+
+            if (result.code === '000000' && result.data) {
+                appendAgentMessage(result.data);
+            } else {
+                appendMessage('agent', `请求失败: ${result.message || '未知错误'} (${result.code})`);
+            }
+        } catch (err) {
+            removeLoading(loadingEl);
+            appendMessage('agent', `网络错误: ${err.message}\n\n请确认后端服务已启动（${apiBase}）`);
+        } finally {
+            isLoading = false;
+            document.getElementById('sendBtn').disabled = false;
+        }
+    }
+
+    // ===== Render Messages =====
+    function appendMessage(role, text) {
+        const container = document.getElementById('chatContainer');
+        const div = document.createElement('div');
+        div.className = `message ${role}`;
+
+        const avatarText = role === 'user' ? 'U' : 'AI';
+        const escapedText = escapeHtml(text).replace(/\n/g, '<br>');
+
+        div.innerHTML = `
+            <div class="avatar">${avatarText}</div>
+            <div class="bubble">${escapedText}</div>`;
+        container.appendChild(div);
+        scrollToBottom();
+    }
+
+    function appendAgentMessage(data) {
+        const container = document.getElementById('chatContainer');
+        const div = document.createElement('div');
+        div.className = 'message agent';
+
+        const answerHtml = escapeHtml(data.answer || '无回答').replace(/\n/g, '<br>');
+
+        // Metadata tags
+        let metaHtml = '<div class="meta-row">';
+
+        if (data.verdict) {
+            const verdictMap = {
+                'PASS': ['tag-pass', '校验通过'],
+                'WARNING': ['tag-warning', '存在风险'],
+                'REJECT': ['tag-reject', '已拒绝']
+            };
+            const v = verdictMap[data.verdict] || ['tag-warning', data.verdict];
+            metaHtml += `<span class="meta-tag ${v[0]}">${v[1]}</span>`;
+        }
+
+        if (data.confidence !== undefined && data.confidence !== null) {
+            const pct = Math.round(data.confidence * 100);
+            metaHtml += `<span class="meta-tag tag-confidence">置信度 ${pct}%</span>`;
+        }
+
+        if (data.sources && data.sources.length > 0) {
+            const sourceNames = { 'TOOL': 'Tool业务数据', 'RAG': 'RAG制度文档', 'MEMORY': '会话记忆' };
+            data.sources.forEach(s => {
+                const name = sourceNames[s] || s;
+                metaHtml += `<span class="meta-tag tag-source">${name}</span>`;
+            });
+        }
+
+        if (data.totalRounds !== undefined) {
+            metaHtml += `<span class="meta-tag tag-rounds">ReAct ${data.totalRounds}轮</span>`;
+        }
+
+        metaHtml += '</div>';
+
+        // Issues
+        let issuesHtml = '';
+        if (data.issues && data.issues.length > 0) {
+            issuesHtml = '<div class="issues-list"><strong>校验问题：</strong><ul>';
+            data.issues.forEach(issue => {
+                issuesHtml += `<li>${escapeHtml(translateIssue(issue))}</li>`;
+            });
+            issuesHtml += '</ul></div>';
+        }
+
+        // Structured data
+        let dataHtml = '';
+        if (data.data && Object.keys(data.data).length > 0) {
+            const dataId = 'data_' + Date.now();
+            const translatedData = translateDataKeys(data.data);
+            dataHtml = `
+                <div class="data-panel">
+                    <button class="data-toggle" onclick="toggleData('${dataId}')">查看结构化数据</button>
+                    <div class="data-content" id="${dataId}">${escapeHtml(JSON.stringify(translatedData, null, 2))}</div>
+                </div>`;
+        }
+
+        div.innerHTML = `
+            <div class="avatar">AI</div>
+            <div>
+                <div class="bubble">
+                    ${answerHtml}
+                    ${metaHtml}
+                    ${issuesHtml}
+                    ${dataHtml}
+                </div>
+            </div>`;
+        container.appendChild(div);
+        scrollToBottom();
+    }
+
+    function appendLoading() {
+        const container = document.getElementById('chatContainer');
+        const div = document.createElement('div');
+        div.className = 'message agent';
+        div.id = 'loadingMsg';
+        div.innerHTML = `
+            <div class="avatar">AI</div>
+            <div class="bubble">
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <span style="margin-left:8px;font-size:12px;color:var(--text-secondary)">思考中...</span>
+                </div>
+            </div>`;
+        container.appendChild(div);
+        scrollToBottom();
+        return div;
+    }
+
+    function removeLoading(el) {
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+    }
+
+    // ===== Utils =====
+    function translateIssue(text) {
+        if (!text) return '';
+        // Pattern-based translation for known issue formats
+        const patterns = [
+            { regex: /^Hallucination detected: only (\d+)% of answer is supported by context$/, cn: '检测到幻觉：仅 $1% 的回答有上下文数据支撑' },
+            { regex: /^Partial hallucination: (\d+)% of answer is supported by context$/, cn: '部分幻觉：$1% 的回答有上下文数据支撑' },
+            { regex: /^Conflicting information detected between data sources$/, cn: '检测到数据源之间存在冲突信息' },
+            { regex: /^Answer may be incomplete: missing key entities from the query$/, cn: '回答可能不完整：缺少查询中的关键实体信息' },
+            { regex: /^Empty or null answer$/, cn: '回答为空' }
+        ];
+        for (const p of patterns) {
+            if (p.regex.test(text)) {
+                return text.replace(p.regex, p.cn);
+            }
+        }
+        return text; // Unknown pattern, return as-is
+    }
+
+    // Field name translation map for structured data
+    const FIELD_NAME_MAP = {
+        'totalDepartments': '部门总数',
+        'metrics': '指标列表',
+        'deptId': '部门ID',
+        'deptName': '部门名称',
+        'headcount': '编制人数',
+        'currentStaff': '在职人数',
+        'headcountUsageRate': '编制使用率',
+        'turnoverRate': '离职率',
+        'probationPassRate': '转正通过率',
+        'performanceDistribution': '绩效分布',
+        'averageTenureYears': '平均司龄(年)',
+        'employmentTypeDistribution': '用工类型分布',
+        'totalEmployees': '员工总数',
+        'full_time': '正式员工',
+        'contractor': '外包人员',
+        'intern': '实习生',
+        'toolName': '工具名称',
+        'success': '是否成功',
+        'data': '数据',
+        'errorMessage': '错误信息',
+        'executionTimeMs': '执行耗时(ms)'
+    };
+
+    function translateDataKeys(obj) {
+        if (obj === null || obj === undefined) return obj;
+        if (Array.isArray(obj)) {
+            return obj.map(item => translateDataKeys(item));
+        }
+        if (typeof obj === 'object') {
+            const result = {};
+            for (const [key, value] of Object.entries(obj)) {
+                const newKey = FIELD_NAME_MAP[key] || key;
+                result[newKey] = translateDataKeys(value);
+            }
+            return result;
+        }
+        // Translate known enum values
+        if (typeof obj === 'string' && FIELD_NAME_MAP[obj]) {
+            return FIELD_NAME_MAP[obj];
+        }
+        return obj;
+    }
+
+    function toggleData(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('show');
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function scrollToBottom() {
+        const container = document.getElementById('chatContainer');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function showToast(msg, type) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => { toast.className = 'toast'; }, 3000);
+    }
+
+    function autoResizeTextarea() {
+        const textarea = document.getElementById('inputBox');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+</script>
+</body>
+</html>

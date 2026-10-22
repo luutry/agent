@@ -1,0 +1,14 @@
+[
+  {"employeeId":"E001","name":"张三","deptId":"DEPT_TECH","position":"高级工程师","performanceGrade":"A","tenureYears":5,"employmentType":"full_time","jobLevel":"TECH_07","phone":"13800000001","email":"zhangsan@company.com","status":"active"},
+  {"employeeId":"E002","name":"李四","deptId":"DEPT_TECH","position":"工程师","performanceGrade":"B+","tenureYears":3,"employmentType":"full_time","jobLevel":"TECH_05","phone":"13800000002","email":"lisi@company.com","status":"active"},
+  {"employeeId":"E003","name":"王五","deptId":"DEPT_HR","position":"HR专员","performanceGrade":"A","tenureYears":7,"employmentType":"full_time","jobLevel":"HR_04","phone":"13800000003","email":"wangwu@company.com","status":"active"},
+  {"employeeId":"E004","name":"赵六","deptId":"DEPT_HR","position":"HR经理","performanceGrade":"A","tenureYears":10,"employmentType":"full_time","jobLevel":"HR_06","phone":"13800000004","email":"zhaoliu@company.com","status":"active"},
+  {"employeeId":"E005","name":"孙七","deptId":"DEPT_FIN","position":"会计","performanceGrade":"B","tenureYears":2,"employmentType":"full_time","jobLevel":"FIN_04","phone":"13800000005","email":"sunqi@company.com","status":"active"},
+  {"employeeId":"E006","name":"周八","deptId":"DEPT_TECH","position":"架构师","performanceGrade":"A","tenureYears":8,"employmentType":"full_time","jobLevel":"TECH_08","phone":"13800000006","email":"zhouba@company.com","status":"active"},
+  {"employeeId":"E007","name":"吴九","deptId":"DEPT_TECH","position":"实习生","performanceGrade":"B+","tenureYears":1,"employmentType":"intern","jobLevel":"TECH_02","phone":"13800000007","email":"wujiu@company.com","status":"active"},
+  {"employeeId":"E008","name":"郑十","deptId":"DEPT_FIN","position":"财务主管","performanceGrade":"A","tenureYears":12,"employmentType":"full_time","jobLevel":"FIN_06","phone":"13800000008","email":"zhengshi@company.com","status":"active"},
+  {"employeeId":"E009","name":"钱十一","deptId":"DEPT_HR","position":"招聘专员","performanceGrade":"B","tenureYears":4,"employmentType":"full_time","jobLevel":"HR_03","phone":"13800000009","email":"qianshiyi@company.com","status":"active"},
+  {"employeeId":"E010","name":"陈十二","deptId":"DEPT_TECH","position":"测试工程师","performanceGrade":"C","tenureYears":2,"employmentType":"contractor","jobLevel":"TECH_04","phone":"13800000010","email":"chenshier@company.com","status":"active"},
+  {"employeeId":"E011","name":"林十三","deptId":"DEPT_FIN","position":"出纳","performanceGrade":"B+","tenureYears":6,"employmentType":"full_time","jobLevel":"FIN_05","phone":"13800000011","email":"linshisan@company.com","status":"active"},
+  {"employeeId":"E012","name":"黄十四","deptId":"DEPT_HR","position":"培训专员","performanceGrade":"A","tenureYears":3,"employmentType":"full_time","jobLevel":"HR_04","phone":"13800000012","email":"huangshisi@company.com","status":"active"}
+]

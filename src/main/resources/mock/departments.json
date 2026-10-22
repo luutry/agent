@@ -1,0 +1,32 @@
+[
+  {
+    "deptId": "DEPT_TECH",
+    "deptName": "技术部",
+    "parentDeptId": null,
+    "headEmployeeId": "E006",
+    "headcount": 20,
+    "currentStaff": 15,
+    "turnoverRate": 0.08,
+    "probationPassRate": 0.92
+  },
+  {
+    "deptId": "DEPT_HR",
+    "deptName": "人力资源部",
+    "parentDeptId": null,
+    "headEmployeeId": "E004",
+    "headcount": 10,
+    "currentStaff": 8,
+    "turnoverRate": 0.05,
+    "probationPassRate": 0.95
+  },
+  {
+    "deptId": "DEPT_FIN",
+    "deptName": "财务部",
+    "parentDeptId": null,
+    "headEmployeeId": "E008",
+    "headcount": 8,
+    "currentStaff": 6,
+    "turnoverRate": 0.03,
+    "probationPassRate": 0.98
+  }
+]

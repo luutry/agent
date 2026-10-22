@@ -1,0 +1,90 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+
+# Java build & output
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# Git & IDE config
+.git/
+.idea/
+.vscode/
+*.iml
+.gradle/
+gradle/
+
+# Logs & temp
+logs/
+log/
+tmp/
+temp/
+*.log
+*.tmp
+
+# Package dependencies
+node_modules/
+vendor/
+
+# Large binary / archive
+*.zip
+*.tar
+*.gz
+*.7z
+*.pdf
+*.docx
+*.xlsx
+*.png
+*.jpg
+*.jpeg
+
+# Secret & env
+.env
+application-secret.yml
+*.pem
+*.key
+
+# Database dump
+*.sql
+dump/
