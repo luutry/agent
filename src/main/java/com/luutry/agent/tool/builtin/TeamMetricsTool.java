@@ -1,5 +1,6 @@
 package com.luutry.agent.tool.builtin;
 
+import com.luutry.agent.repository.HrDataProvider;
 import com.luutry.agent.security.auth.UserContext;
 import com.luutry.agent.security.auth.UserContextHolder;
 import com.luutry.agent.tool.executor.AgentTool;
@@ -30,9 +31,9 @@ public class TeamMetricsTool implements AgentTool {
 
     public static final String TOOL_NAME = "team_metrics";
 
-    private final MockHrDataProvider dataProvider;
+    private final HrDataProvider dataProvider;
 
-    public TeamMetricsTool(MockHrDataProvider dataProvider) {
+    public TeamMetricsTool(HrDataProvider dataProvider) {
         this.dataProvider = dataProvider;
     }
 

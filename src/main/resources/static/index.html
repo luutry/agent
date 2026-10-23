@@ -375,7 +375,6 @@
 
 <script>
     // ===== State =====
-    let conversationHistory = [];
     let isLoading = false;
 
     // ===== Init =====
@@ -391,6 +390,14 @@
         document.getElementById('sessionId').value = id;
     }
 
+    // SSO Mock 令牌：结构为 header.payload.signature，payload 携带 sub=userId。
+    // 真实环境应由 IdP 登录后签发并经验签，此处仅本地联调用，后端 MockTokenVerifier 不验签。
+    function buildMockToken(userId) {
+        const enc = (obj) => btoa(JSON.stringify(obj))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        return enc({ alg: 'none', typ: 'JWT' }) + '.' + enc({ sub: userId }) + '.mock-signature';
+    }
+
     function newSession() {
         generateSessionId();
         clearChat();
@@ -398,7 +405,6 @@
     }
 
     function clearChat() {
-        conversationHistory = [];
         const container = document.getElementById('chatContainer');
         container.innerHTML = `
             <div class="welcome-msg" id="welcomeMsg">
@@ -450,8 +456,8 @@
         const sessionId = document.getElementById('sessionId').value.trim();
         const apiBase = document.getElementById('apiBase').value.trim();
 
-        if (!userId || !sessionId) {
-            showToast('请填写用户ID和会话ID', 'error');
+        if (!userId) {
+            showToast('请填写用户ID', 'error');
             return;
         }
 
@@ -461,7 +467,6 @@
 
         // Add user bubble
         appendMessage('user', query);
-        conversationHistory.push(query);
         input.value = '';
         input.style.height = 'auto';
 
@@ -471,26 +476,34 @@
         const loadingEl = appendLoading();
 
         try {
+            // SSO：真实场景令牌由 IdP 登录后签发；本地 Mock 阶段按 userId 构造未验签 JWT（sub=userId）
+            const token = buildMockToken(userId);
             const response = await fetch(apiBase + '/api/agent/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
                 body: JSON.stringify({
                     query: query,
                     userId: userId,
-                    sessionId: sessionId,
-                    history: conversationHistory.slice(0, -1)
+                    sessionId: sessionId
                 })
             });
 
             removeLoading(loadingEl);
 
+            const result = await response.json().catch(() => null);
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const msg = result && result.message ? result.message : `HTTP ${response.status}: ${response.statusText}`;
+                throw new Error(msg);
             }
 
-            const result = await response.json();
-
             if (result.code === '000000' && result.data) {
+                // 会话票据由后端签发：首次请求可能为空，回填后下一轮带上即可延续多轮
+                if (result.data.sessionId) {
+                    document.getElementById('sessionId').value = result.data.sessionId;
+                }
                 appendAgentMessage(result.data);
             } else {
                 appendMessage('agent', `请求失败: ${result.message || '未知错误'} (${result.code})`);

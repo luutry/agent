@@ -3,6 +3,7 @@ package com.luutry.agent.memory.shortterm;
 import com.luutry.agent.common.constant.AgentConstants;
 import com.luutry.agent.memory.model.ConversationTurn;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * 短期记忆存储的内存实现，用于开发和测试环境。
+ * 短期记忆存储的内存实现，用于本地开发与测试。
  * <p>
  * 用途：提供无需Redis的短期记忆存储，模拟TTL过期行为。
  * 处理问题：开发/测试环境中Redis可能不可用，此实现使用ConcurrentHashMap +
@@ -23,11 +24,12 @@ import java.util.stream.Collectors;
  * 最后访问时间 + TTL清理过期会话。
  * </p>
  * <p>
- * TODO: 生产部署时替换为RedisShortTermStore，使用RedisTemplate实现。
+ * 仅在 {@code agent.memory.store=memory}（缺省）时装配；生产用 {@link RedisShortTermStore}。
  * </p>
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(prefix = "agent.memory", name = "store", havingValue = "memory", matchIfMissing = true)
 public class InMemoryShortTermStore implements ShortTermMemoryStore {
 
     /**
@@ -39,6 +41,11 @@ public class InMemoryShortTermStore implements ShortTermMemoryStore {
      * 会话元数据：sessionId -> (userId, 最后访问时间)
      */
     private final ConcurrentHashMap<String, SessionMeta> sessionMeta = new ConcurrentHashMap<>();
+
+    /**
+     * 会话摘要：sessionId -> 摘要文本
+     */
+    private final ConcurrentHashMap<String, String> summaries = new ConcurrentHashMap<>();
 
     /**
      * TTL过期后台调度器
@@ -56,17 +63,23 @@ public class InMemoryShortTermStore implements ShortTermMemoryStore {
     }
 
     @Override
-    public void addTurn(String sessionId, String userId, ConversationTurn turn) {
+    public int addTurn(String sessionId, String userId, ConversationTurn turn) {
         Objects.requireNonNull(sessionId, "sessionId must not be null");
         Objects.requireNonNull(userId, "userId must not be null");
         Objects.requireNonNull(turn, "turn must not be null");
 
-        sessions.computeIfAbsent(sessionId, k -> Collections.synchronizedList(new ArrayList<>()));
-        sessions.get(sessionId).add(turn);
+        List<ConversationTurn> turns = sessions.computeIfAbsent(sessionId,
+                k -> Collections.synchronizedList(new ArrayList<>()));
+        int turnNumber;
+        synchronized (turns) {
+            turnNumber = turns.size() + 1;
+            turn.setTurnNumber(turnNumber);
+            turns.add(turn);
+        }
 
         sessionMeta.put(sessionId, new SessionMeta(userId, Instant.now()));
-        log.debug("Added turn #{} to session {}, total turns: {}",
-                turn.getTurnNumber(), sessionId, sessions.get(sessionId).size());
+        log.debug("Added turn #{} to session {}, total turns: {}", turnNumber, sessionId, turnNumber);
+        return turnNumber;
     }
 
     @Override
@@ -76,13 +89,15 @@ public class InMemoryShortTermStore implements ShortTermMemoryStore {
             return Collections.emptyList();
         }
         sessionMeta.computeIfPresent(sessionId, (k, meta) -> meta.touch());
-        return Collections.unmodifiableList(new ArrayList<>(turns));
+        synchronized (turns) {
+            return Collections.unmodifiableList(new ArrayList<>(turns));
+        }
     }
 
     @Override
     public List<ConversationTurn> getRecentTurns(String sessionId, int limit) {
         List<ConversationTurn> allTurns = getAllTurns(sessionId);
-        if (allTurns.isEmpty()) {
+        if (allTurns.isEmpty() || limit <= 0) {
             return Collections.emptyList();
         }
         int fromIndex = Math.max(0, allTurns.size() - limit);
@@ -92,13 +107,37 @@ public class InMemoryShortTermStore implements ShortTermMemoryStore {
     @Override
     public int getTurnCount(String sessionId) {
         List<ConversationTurn> turns = sessions.get(sessionId);
-        return turns != null ? turns.size() : 0;
+        if (turns == null) {
+            return 0;
+        }
+        synchronized (turns) {
+            return turns.size();
+        }
+    }
+
+    @Override
+    public String getSummary(String sessionId) {
+        if (isSessionExpired(sessionId)) {
+            return "";
+        }
+        return summaries.getOrDefault(sessionId, "");
+    }
+
+    @Override
+    public void saveSummary(String sessionId, String summary) {
+        Objects.requireNonNull(sessionId, "sessionId must not be null");
+        if (summary == null || summary.isBlank()) {
+            return;
+        }
+        summaries.put(sessionId, summary);
+        sessionMeta.computeIfPresent(sessionId, (k, meta) -> meta.touch());
     }
 
     @Override
     public void clearSession(String sessionId) {
         sessions.remove(sessionId);
         sessionMeta.remove(sessionId);
+        summaries.remove(sessionId);
         log.debug("Cleared session {}", sessionId);
     }
 

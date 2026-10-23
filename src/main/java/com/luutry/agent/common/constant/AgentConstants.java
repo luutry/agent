@@ -60,6 +60,12 @@ public final class AgentConstants {
     public static final long DEFAULT_SESSION_TTL_MS = 30 * 60 * 1000L;
 
     /**
+     * 单个会话保留的最大轮次数。
+     * 超出部分从最旧开始丢弃，防止超长会话把 Redis 内存撑爆。
+     */
+    public static final int MAX_TURNS_PER_SESSION = 50;
+
+    /**
      * 对话摘要压缩的滑动窗口大小。
      * 当对话轮次超过此数量时，较早的轮次将被压缩为摘要。
      */

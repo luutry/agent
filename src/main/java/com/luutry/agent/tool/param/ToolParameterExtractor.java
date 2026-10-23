@@ -1,6 +1,6 @@
 package com.luutry.agent.tool.param;
 
-import com.luutry.agent.tool.builtin.MockHrDataProvider;
+import com.luutry.agent.repository.HrDataProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -35,9 +35,9 @@ public class ToolParameterExtractor {
     private static final String PARAM_DEPT_ID = "deptId";
     private static final String PARAM_CYCLE = "cycle";
 
-    private final MockHrDataProvider dataProvider;
+    private final HrDataProvider dataProvider;
 
-    public ToolParameterExtractor(MockHrDataProvider dataProvider) {
+    public ToolParameterExtractor(HrDataProvider dataProvider) {
         this.dataProvider = Objects.requireNonNull(dataProvider, "dataProvider must not be null");
     }
 

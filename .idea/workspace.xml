@@ -4,282 +4,38 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d5b1ac5-77a1-43ac-8758-dcc12190a559" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AGENTS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/ARCHITECTURE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/CONVENTIONS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/ROADMAP.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/000_TODO索引.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/001_MySQL数据源接入.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/002_外部HR_API接入.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/003_Milvus向量库接入.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/004_Embedding模型接入.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/005_组织树与数据权限真实数据.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/006_绩效数据送模方案.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/007_流式输出.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/008_导出功能.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/009_多意图检测与任务分解.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/010_数据权限真实模型接入.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/011_period时间维度与Mock数据口径.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/012_绩效查询服务端确定性回答.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/013_复合查询超限截断声明.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/014_工号脱敏与取参双通道.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/015_换行与列表结构在清洗中被抹平.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/016_注入检测未接入预处理管道.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/017_清洗元信息无人消费.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/TODO/018_指代消解缓存与熔断.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/优化升级/20261020_001_Pipeline_Envelope管道信封模式引入.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/优化升级/20261022_003_意图分类权重存储迁移_从yml到独立classpath资源文件.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/优化升级/20261022_004_输入清洗与脱敏加固.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/优化升级/20261022_005_指代消解与会话上下文加固.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/审计/20261022_001_离职率查询链路审查.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/技术债/Pipeline Envelope" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/知识点/20261022_Agent查询预处理管道做什么与为什么_通俗讲解.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/知识点/20261022_ThreadLocal与线程复用导致用户上下文泄露_通俗讲解.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/链路追踪/20261022_001_本月各部门离职率查询链路分析.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/链路追踪/20261022_001_离职率查询链路审查.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/链路追踪/20261022_002_本月各部门离职率查询链路报告_V2.0.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/链路追踪/20261022_003_链路V2复审.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/问题排查/20261020_001_ContextAggregator_Bean未注册导致启动失败.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/问题排查/20261020_002_DataSource自动配置缺失导致启动失败.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/问题排查/20261022_001_SelfCritique幻觉检测误判LLM改写回答.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/问题排查/20261022_002_离职率查询误判REJECT_事实化真相源重构.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/问题排查/20261022_003_链路V2复审问题修复实施.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/问题排查/20261022_004_复合查询拆分实施.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc/问题排查/BUG记录模板.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python/output/application_yml_snippet.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python/output/weights.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sql/_tmp_out.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/AgentApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/aggregate/FactExtractor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/aggregate/model/Fact.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/aggregate/model/FactSet.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/constant/AgentConstants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/constant/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/enums/DataSource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/enums/IntentType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/enums/TaskState.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/enums/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/exception/AgentException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/exception/ErrorCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/exception/ErrorCodes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/exception/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/dto/ChatRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/dto/PageRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/dto/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/entity/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/vo/ApiResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/vo/ChatResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/vo/PageResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/vo/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/config/LlmConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/config/MybatisPlusConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/config/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/llm/LlmService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/llm/QwenLlmService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/planner/model/ExecutionResult.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/planner/synthesis/DataTemplateRenderer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/model/QueryUnit.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/router/IntentWeightsLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/rag/source/MockPolicyDocumentLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/rag/vectorstore/DashScopeEmbeddingService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/rag/vectorstore/EmbeddingService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/rag/vectorstore/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/AttendanceDaily.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/AttendanceMonthly.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/BusinessTrip.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/ClockRecord.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/Leave.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/Overtime.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/Schedule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/attendance/Shift.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/contract/ContractRenewal.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/contract/Departure.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/contract/LaborContract.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/contract/Regularization.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/contract/SalaryAdjustment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/contract/Transfer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/Employee.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeContact.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeEducation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeEmergency.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeFamily.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeHistory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeIdentity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeStatusChange.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/employee/EmployeeWorkHistory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/insurance/InsuranceBase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/insurance/InsuranceChange.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/insurance/InsuranceEnrollment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/insurance/InsurancePayment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/insurance/InsuranceScheme.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/leave/LeaveApproval.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/leave/LeaveBalance.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/leave/LeaveCarryover.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/leave/LeaveQuota.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/leave/LeaveRecord.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/leave/LeaveRule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/leave/LeaveType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/Company.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/Department.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/JobFamily.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/JobLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/OrgChange.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/Position.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/PositionLevel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/ReportRelation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/performance/EvaluationCycle.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/performance/EvaluationIndicator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/performance/EvaluationPlan.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/performance/EvaluationResult.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/performance/EvaluationScore.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/performance/EvaluationTask.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/Candidate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/Interview.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/InterviewFeedback.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/InterviewRoundTemplate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/JobRequisition.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/Offer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/Onboarding.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/RecruitmentChannel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/Resume.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/recruitment/TalentPool.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/Bonus.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/SalaryArchive.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/SalaryChangeHistory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/SalaryDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/SalaryItem.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/SalaryMonthly.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/SalaryPayment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/SalaryStandard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/Subsidy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/salary/TaxRecord.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/jsonapi/JsonBaseMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/ApplicationMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/AttendanceDailyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/AttendanceMonthlyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/BonusMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/BusinessTripMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/CandidateMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/ClockRecordMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/CompanyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/ContractRenewalMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/DepartmentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/DepartureMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeContactMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeEducationMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeEmergencyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeFamilyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeHistoryMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeIdentityMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeStatusChangeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EmployeeWorkHistoryMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EvaluationCycleMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EvaluationIndicatorMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EvaluationPlanMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EvaluationResultMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EvaluationScoreMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/EvaluationTaskMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InsuranceBaseMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InsuranceChangeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InsuranceEnrollmentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InsurancePaymentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InsuranceSchemeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InterviewFeedbackMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InterviewMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/InterviewRoundTemplateMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/JobFamilyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/JobLevelMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/JobRequisitionMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LaborContractMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveApprovalMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveBalanceMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveCarryoverMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveQuotaMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveRecordMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveRuleMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/LeaveTypeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/OfferMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/OnboardingMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/OrgChangeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/OvertimeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/PositionLevelMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/PositionMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/RecruitmentChannelMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/RegularizationMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/ReportRelationMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/ResumeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryAdjustmentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryArchiveMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryChangeHistoryMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryDetailMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryItemMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryMonthlyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryPaymentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SalaryStandardMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/ScheduleMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/ShiftMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/SubsidyMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/TalentPoolMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/TaxRecordMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/TransferMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mapper/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mock/JsonDepartmentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mock/JsonEmployeeMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mock/JsonFileBaseMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/mock/JsonPerformanceRecordMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/security/auth/JsonFileUserDirectory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/security/auth/MockUserDirectory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/security/auth/UserDirectory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/security/filter/ToolResultSanitizer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/param/ToolParameterExtractor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/param/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/web/AgentController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/web/package-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/intent-weights.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mock/departments.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mock/employees.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mock/performance_records.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mock/policies.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mock/user_directory.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/aggregate/FactExtractorTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/common/constant/AgentConstantsTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/common/enums/EnumsTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/common/exception/AgentExceptionTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/common/exception/ErrorCodesTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/common/model/dto/PageRequestTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/common/model/vo/ApiResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/common/util/JsonUtilsTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/llm/QwenLlmServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/planner/synthesis/DataTemplateRendererTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/cleaner/QueryInputDesensitizerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/resolver/LlmCoreferenceResolverTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/router/IntentWeightsLoaderTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/router/RuleBasedTaskDecomposerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/rag/rerank/SimpleRerankerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/rag/source/MockPolicyDocumentLoaderTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/repository/mock/JsonFileBaseMapperTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/security/auth/JsonFileUserDirectoryTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/security/auth/MockUserDirectoryTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/security/filter/ToolResultSanitizerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/tool/builtin/BuiltinToolsTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/tool/param/ToolParameterExtractorTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/web/AgentControllerTest.java" afterDir="false" />
+    <list default="true" id="3d5b1ac5-77a1-43ac-8758-dcc12190a559" name="Changes" comment="init">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/security/auth/AuthenticatedPrincipal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/security/auth/AuthenticationException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/security/auth/TokenVerifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/CONVENTIONS.md" beforeDir="false" afterPath="$PROJECT_DIR$/doc/CONVENTIONS.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/TODO/000_TODO索引.md" beforeDir="false" afterPath="$PROJECT_DIR$/doc/TODO/000_TODO索引.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/constant/AgentConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/constant/AgentConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/dto/ChatRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/dto/ChatRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/vo/ChatResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/common/model/vo/ChatResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/memory/MemoryManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/memory/MemoryManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/memory/shortterm/InMemoryShortTermStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/memory/shortterm/InMemoryShortTermStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/memory/shortterm/ShortTermMemoryStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/memory/shortterm/ShortTermMemoryStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/resolver/CoreferenceResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/resolver/CoreferenceResolver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/resolver/SimpleCoreferenceResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/resolver/SimpleCoreferenceResolver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/router/QueryRouter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/router/QueryRouter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/Department.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/repository/entity/org/Department.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/EmployeeProfileTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/EmployeeProfileTool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/EmployeeSearchTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/EmployeeSearchTool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/MockHrDataProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/MockHrDataProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/OrgTreeTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/OrgTreeTool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/PerformanceRecordTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/PerformanceRecordTool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/TeamMetricsTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/builtin/TeamMetricsTool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/param/ToolParameterExtractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/tool/param/ToolParameterExtractor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/luutry/agent/web/AgentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/luutry/agent/web/AgentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/luutry/agent/memory/MemoryManagerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/memory/MemoryManagerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/luutry/agent/memory/shortterm/InMemoryShortTermStoreTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/memory/shortterm/InMemoryShortTermStoreTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/resolver/SimpleCoreferenceResolverTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/resolver/SimpleCoreferenceResolverTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/router/QueryRouterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/preprocessor/router/QueryRouterTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/luutry/agent/web/AgentControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/luutry/agent/web/AgentControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -312,36 +68,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/project/luutry-agent/doc/链路追踪",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "D:/project/luutry-agent/src/main/java/com/luutry/agent/Main.java",
-    "project.structure.last.edited": "Artifacts",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "editor.preferences.tabs",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/project/luutry-agent/doc/链路追踪&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;D:/project/luutry-agent/src/main/java/com/luutry/agent/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;,
+      &quot;redis&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -449,15 +206,42 @@
       <workItem from="1792589471799" duration="2297000" />
       <workItem from="1792591835357" duration="306000" />
       <workItem from="1792634569851" duration="1010000" />
-      <workItem from="1792636384180" duration="31057000" />
+      <workItem from="1792636384180" duration="33871000" />
+      <workItem from="1792719260528" duration="6689000" />
+      <workItem from="1792726163207" duration="92000" />
+      <workItem from="1792726272407" duration="2999000" />
+      <workItem from="1792733953054" duration="14000" />
+      <workItem from="1792734022015" duration="4124000" />
     </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1792681048334</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1792681048334</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="init" />
+    <option name="LAST_COMMIT_MESSAGE" value="init" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -466,11 +250,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/luutry/agent/core/preprocessor/router/KeywordIntentClassifier.java</url>
           <line>57</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/luutry/agent/preprocessor/resolver/SimpleCoreferenceResolver.java</url>
-          <line>157</line>
-          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

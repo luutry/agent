@@ -1,7 +1,9 @@
 package com.luutry.agent.preprocessor.resolver;
 
 import com.luutry.agent.common.constant.AgentConstants;
+import com.luutry.agent.memory.ConversationHistoryService;
 import com.luutry.agent.observability.trace.AgentTrace;
+import com.luutry.agent.preprocessor.cleaner.QueryCleaner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -133,17 +135,24 @@ public class SimpleCoreferenceResolver implements CoreferenceResolver {
 
     private final ResolvePolicy policy;
     private final LlmCoreferenceResolver llmResolver;
+    private final ConversationHistoryService historyService;
+    private final QueryCleaner queryCleaner;
 
-    public SimpleCoreferenceResolver(ResolvePolicy policy, LlmCoreferenceResolver llmResolver) {
+    public SimpleCoreferenceResolver(ResolvePolicy policy,
+                                     LlmCoreferenceResolver llmResolver,
+                                     ConversationHistoryService historyService,
+                                     QueryCleaner queryCleaner) {
         this.policy = Objects.requireNonNull(policy, "policy must not be null");
         this.llmResolver = Objects.requireNonNull(llmResolver, "llmResolver must not be null");
+        this.historyService = Objects.requireNonNull(historyService, "historyService must not be null");
+        this.queryCleaner = Objects.requireNonNull(queryCleaner, "queryCleaner must not be null");
     }
 
     @Override
     @AgentTrace(stage = "coreference_resolution")
-    public ResolveResult resolve(String query, List<String> historyTurns) {
+    public ResolveResult resolve(String query, String sessionId) {
         try {
-            return doResolve(query, historyTurns);
+            return doResolve(query, sessionId);
         } catch (Throwable t) {
             // 铁律#1：Throwable 兜底，失败降级返回原文
             log.error("指代消解未知异常，降级返回原文: query={}", query, t);
@@ -152,30 +161,44 @@ public class SimpleCoreferenceResolver implements CoreferenceResolver {
     }
 
     /**
-     * 实际消解编排逻辑
+     * 实际消解编排逻辑。
+     * 历史懒加载：只有确需上下文（省略补全候选 或 含独立代词）时才拉取记忆，
+     * 普通完整查询直接返回原文，不触发一次记忆读取。
      */
-    private ResolveResult doResolve(String query, List<String> historyTurns) {
+    private ResolveResult doResolve(String query, String sessionId) {
         // 步骤0：空值/空白快速返回
         if (query == null || query.isBlank()) {
             return ResolveResult.unresolved(query != null ? query : "");
         }
 
+        // 懒加载前置判定：tryEllipsisResolution 内部也做同样守卫，此处提前拦截只为避免无谓读记忆
+        boolean ellipsisCandidate = isLikelyChineseName(query)
+                && !isBusinessOrGreeting(query)
+                && !isCompleteQuestion(query);
+        boolean hasPronoun = containsStandalonePronoun(query);
+        if (!ellipsisCandidate && !hasPronoun) {
+            return ResolveResult.unresolved(query);
+        }
+
+        // 用到才拿：按需拉取历史（已清洗，见 loadCleanedHistory）
+        List<String> historyTurns = loadCleanedHistory(sessionId);
+
         // 步骤0.5：省略补全 — 当前查询极短（纯人名）时，尝试从上一轮继承谓语
         // 必须在代词检测之前，因为"于娟"不含任何代词，会被步骤1直接跳过
-        if (historyTurns != null && !historyTurns.isEmpty()) {
+        if (ellipsisCandidate && !historyTurns.isEmpty()) {
             ResolveResult ellipsisResult = tryEllipsisResolution(query, historyTurns);
             if (ellipsisResult != null) {
                 return ellipsisResult;
             }
         }
 
-        // 步骤1：规则触发器 — 检测是否含独立代词
-        if (!containsStandalonePronoun(query)) {
+        // 步骤1：规则触发器 — 不含独立代词则无需继续消解
+        if (!hasPronoun) {
             return ResolveResult.unresolved(query);
         }
 
         // 无历史则无法消解
-        if (historyTurns == null || historyTurns.isEmpty()) {
+        if (historyTurns.isEmpty()) {
             return ResolveResult.unresolved(query);
         }
 
@@ -187,6 +210,29 @@ public class SimpleCoreferenceResolver implements CoreferenceResolver {
 
         // 步骤3：LLM主力消解
         return llmResolver.resolve(query, historyTurns);
+    }
+
+    /**
+     * 按需拉取会话历史并逐条清洗。
+     * 历史与当前输入走同一清洗管道：否则历史里的 PII 会被消解器原样拼回 finalQuery，
+     * 绕过入站脱敏进入 Prompt（R3）。
+     */
+    private List<String> loadCleanedHistory(String sessionId) {
+        List<String> raw = historyService.recentUserQueries(sessionId);
+        if (raw == null || raw.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> cleaned = new ArrayList<>(raw.size());
+        for (String turn : raw) {
+            if (turn == null) {
+                continue;
+            }
+            String text = queryCleaner.clean(turn).getCleanedText();
+            if (text != null && !text.isBlank()) {
+                cleaned.add(text);
+            }
+        }
+        return cleaned;
     }
 
     // ==================== 省略补全 ====================

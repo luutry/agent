@@ -1,8 +1,11 @@
 package com.luutry.agent.tool.builtin;
 
+import com.luutry.agent.repository.HrDataProvider;
 import com.luutry.agent.repository.mock.JsonDepartmentMapper;
 import com.luutry.agent.repository.mock.JsonEmployeeMapper;
 import com.luutry.agent.repository.mock.JsonPerformanceRecordMapper;
+import com.luutry.agent.security.filter.PiiMaskerFactory;
+import com.luutry.agent.security.filter.PiiType;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -14,9 +17,13 @@ import java.util.*;
  * 模拟 MyBatis-Plus 的数据访问方式。真实数据库接入后只需替换 Mapper 实现，
  * 本类及上层工具代码不改（R11）。
  * </p>
+ * <p>
+ * 过渡态：真实数据已由 {@link com.luutry.agent.repository.mysql.MySqlHrDataProvider} 提供（@Primary），
+ * 本 Mock 实现仅为兼容既有单元测试保留，将在阶段 D 随 Json Mock 一并移除。
+ * </p>
  */
 @Component
-public class MockHrDataProvider {
+public class MockHrDataProvider implements HrDataProvider {
 
     private final JsonEmployeeMapper employeeMapper;
     private final JsonDepartmentMapper departmentMapper;
@@ -31,7 +38,7 @@ public class MockHrDataProvider {
     }
 
     public List<Map<String, Object>> getEmployees() {
-        return employeeMapper.selectAll();
+        return maskEmployees(employeeMapper.selectAll());
     }
 
     public List<Map<String, Object>> getDepartments() {
@@ -43,7 +50,7 @@ public class MockHrDataProvider {
     }
 
     public Map<String, Object> findEmployeeById(String employeeId) {
-        return employeeMapper.selectById(employeeId);
+        return maskEmployee(employeeMapper.selectById(employeeId));
     }
 
     public Map<String, Object> findDepartmentById(String deptId) {
@@ -67,7 +74,7 @@ public class MockHrDataProvider {
 
     /** 按管辖范围查询员工 */
     public List<Map<String, Object>> getEmployees(List<String> scope) {
-        return employeeMapper.selectList(scope);
+        return maskEmployees(employeeMapper.selectList(scope));
     }
 
     /** 按管辖范围查询绩效记录（通过员工关联过滤） */
@@ -83,5 +90,31 @@ public class MockHrDataProvider {
     /** 全量部门数（用于 TeamMetricsTool 的 scopeNotice 截断检测） */
     public int getTotalDepartmentCount() {
         return departmentMapper.selectAll().size();
+    }
+
+    // ===== 出域脱敏：与 MySqlHrDataProvider 契约一致（phone 掩码，R3） =====
+    // Mock 数据为共享缓存，必须复制后再掩码，避免污染原始 JSON 加载结果。
+
+    private List<Map<String, Object>> maskEmployees(List<Map<String, Object>> rows) {
+        if (rows == null) {
+            return Collections.emptyList();
+        }
+        List<Map<String, Object>> out = new ArrayList<>(rows.size());
+        for (Map<String, Object> row : rows) {
+            out.add(maskEmployee(row));
+        }
+        return out;
+    }
+
+    private Map<String, Object> maskEmployee(Map<String, Object> row) {
+        if (row == null) {
+            return null;
+        }
+        Map<String, Object> copy = new LinkedHashMap<>(row);
+        Object phone = copy.get("phone");
+        if (phone != null) {
+            copy.put("phone", PiiMaskerFactory.getMasker(PiiType.PHONE).mask(phone.toString()));
+        }
+        return copy;
     }
 }

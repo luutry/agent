@@ -10,9 +10,15 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-  # redis:
-  #   host: localhost
-  #   port: 6379
+  # Redis：会话历史与摘要的唯一存储，服务端持有全部多轮上下文
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DB:0}
+      # 命令/连接超时压到 1s：Redis 故障时快速降级，不拖垮对话主链路
+      timeout: 1000ms
+      connect-timeout: 1000ms
 
 # MyBatis-Plus配置
 mybatis-plus:
@@ -24,6 +30,9 @@ mybatis-plus:
 # ==================== Agent 清洗策略配置 ====================
 # 阈值由上线后查询长度分布指标（P95/P99）驱动调整
 agent:
+  memory:
+    # 会话历史存储实现：redis（默认，跨实例/重启不丢）| memory（本地离线调试）
+    store: ${MEMORY_STORE:redis}
   clean-policy:
     # WARN 截断阈值：清洗后文本超过此长度标记 truncated=true
     warn-threshold-chars: 1500

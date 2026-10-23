@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  HR 扁平化查询：多表 join 出工具消费的 Map，数据权限 scope 下推到 dept_code IN(...) 条件（R2）。
+  phone 原文返回，由 MySqlHrDataProvider 出域前掩码；idNumber/birthDate 不查询（R3）。
+-->
+<mapper namespace="com.luutry.agent.repository.mapper.HrQueryMapper">
+
+    <sql id="employeeColumns">
+        e.employee_code                        AS employeeId,
+        e.employee_name                        AS name,
+        d.dept_code                            AS deptId,
+        COALESCE(p.position_name, '')          AS position,
+        COALESCE(jl.level_name, '')            AS jobLevel,
+        COALESCE((SELECT COALESCE(r.final_grade, r.grade)
+                  FROM hr_evaluation_result r
+                  JOIN hr_evaluation_task t ON r.task_id = t.id
+                  JOIN hr_evaluation_cycle c ON t.cycle_id = c.id
+                  WHERE r.employee_id = e.id AND r.deleted = 0
+                  ORDER BY c.end_date DESC, r.id DESC LIMIT 1), 'UNRATED') AS performanceGrade,
+        TIMESTAMPDIFF(YEAR, e.entry_date, CURDATE()) AS tenureYears,
+        e.employment_type                      AS employmentType,
+        e.status                               AS status,
+        COALESCE(e.email, '')                  AS email,
+        COALESCE(e.phone, '')                  AS phone
+    </sql>
+
+    <sql id="employeeJoins">
+        FROM hr_employee e
+        LEFT JOIN hr_department d ON e.dept_id = d.id
+        LEFT JOIN hr_position   p ON e.position_id = p.id
+        LEFT JOIN hr_job_level  jl ON e.level_id = jl.id
+    </sql>
+
+    <select id="selectEmployees" resultType="java.util.LinkedHashMap">
+        SELECT <include refid="employeeColumns"/>
+        <include refid="employeeJoins"/>
+        WHERE e.deleted = 0
+        <if test="scope != null and scope.size() > 0">
+            AND d.dept_code IN
+            <foreach collection="scope" item="code" open="(" separator="," close=")">#{code}</foreach>
+        </if>
+        ORDER BY e.id
+    </select>
+
+    <select id="selectEmployeeByCode" resultType="java.util.LinkedHashMap">
+        SELECT <include refid="employeeColumns"/>
+        <include refid="employeeJoins"/>
+        WHERE e.deleted = 0 AND e.employee_code = #{employeeCode}
+        LIMIT 1
+    </select>
+
+    <sql id="departmentColumns">
+        d.dept_code             AS deptId,
+        d.dept_name             AS deptName,
+        pd.dept_code            AS parentDeptId,
+        d.head_employee_code    AS headEmployeeId,
+        d.head_count            AS headcount,
+        d.current_staff         AS currentStaff,
+        d.turnover_rate         AS turnoverRate,
+        d.probation_pass_rate   AS probationPassRate
+    </sql>
+
+    <select id="selectDepartments" resultType="java.util.LinkedHashMap">
+        SELECT <include refid="departmentColumns"/>
+        FROM hr_department d
+        LEFT JOIN hr_department pd ON d.parent_dept_id = pd.id
+        WHERE d.deleted = 0
+        <if test="scope != null and scope.size() > 0">
+            AND d.dept_code IN
+            <foreach collection="scope" item="code" open="(" separator="," close=")">#{code}</foreach>
+        </if>
+        ORDER BY d.sort_order, d.id
+    </select>
+
+    <select id="selectDepartmentByCode" resultType="java.util.LinkedHashMap">
+        SELECT <include refid="departmentColumns"/>
+        FROM hr_department d
+        LEFT JOIN hr_department pd ON d.parent_dept_id = pd.id
+        WHERE d.deleted = 0 AND d.dept_code = #{deptCode}
+        LIMIT 1
+    </select>
+
+    <select id="selectSubDepartments" resultType="java.util.LinkedHashMap">
+        SELECT <include refid="departmentColumns"/>
+        FROM hr_department d
+        JOIN hr_department pd ON d.parent_dept_id = pd.id
+        WHERE d.deleted = 0 AND pd.dept_code = #{parentDeptCode}
+        <if test="scope != null and scope.size() > 0">
+            AND d.dept_code IN
+            <foreach collection="scope" item="code" open="(" separator="," close=")">#{code}</foreach>
+        </if>
+        ORDER BY d.sort_order, d.id
+    </select>
+
+    <select id="countDepartments" resultType="int">
+        SELECT COUNT(*) FROM hr_department WHERE deleted = 0
+    </select>
+
+    <sql id="performanceColumns">
+        e.employee_code                 AS employeeId,
+        c.cycle_name                    AS cycle,
+        r.total_score                   AS score,
+        COALESCE(r.final_grade, r.grade) AS grade,
+        r.appealed                      AS appealed
+    </sql>
+
+    <select id="selectPerformanceByEmployeeCode" resultType="java.util.LinkedHashMap">
+        SELECT <include refid="performanceColumns"/>
+        FROM hr_evaluation_result r
+        JOIN hr_evaluation_task   t ON r.task_id = t.id
+        JOIN hr_evaluation_cycle  c ON t.cycle_id = c.id
+        JOIN hr_employee          e ON r.employee_id = e.id
+        LEFT JOIN hr_department   ed ON e.dept_id = ed.id
+        WHERE r.deleted = 0 AND e.employee_code = #{employeeCode}
+        <if test="scope != null and scope.size() > 0">
+            AND ed.dept_code IN
+            <foreach collection="scope" item="code" open="(" separator="," close=")">#{code}</foreach>
+        </if>
+        ORDER BY c.end_date DESC, r.id DESC
+    </select>
+
+    <select id="selectAllPerformance" resultType="java.util.LinkedHashMap">
+        SELECT <include refid="performanceColumns"/>
+        FROM hr_evaluation_result r
+        JOIN hr_evaluation_task   t ON r.task_id = t.id
+        JOIN hr_evaluation_cycle  c ON t.cycle_id = c.id
+        JOIN hr_employee          e ON r.employee_id = e.id
+        WHERE r.deleted = 0
+        ORDER BY e.id, c.end_date DESC
+    </select>
+
+</mapper>

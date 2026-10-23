@@ -22,6 +22,11 @@ import java.util.Map;
 public class ChatResponse {
 
     /**
+     * 本轮所属会话标识；客户端下一轮原样回传即可延续多轮上下文
+     */
+    private String sessionId;
+
+    /**
      * Agent对用户Query的文本回答
      */
     private String answer;

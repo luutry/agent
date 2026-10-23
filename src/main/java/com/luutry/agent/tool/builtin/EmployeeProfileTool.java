@@ -3,10 +3,9 @@ package com.luutry.agent.tool.builtin;
 import com.luutry.agent.tool.executor.AgentTool;
 import com.luutry.agent.tool.model.ToolRequest;
 import com.luutry.agent.tool.model.ToolResult;
+import com.luutry.agent.repository.HrDataProvider;
 import com.luutry.agent.security.auth.UserContext;
 import com.luutry.agent.security.auth.UserContextHolder;
-import com.luutry.agent.security.filter.PiiMaskerFactory;
-import com.luutry.agent.security.filter.PiiType;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -22,7 +21,7 @@ import java.util.Map;
  * 处理方式：
  * 1. 根据employeeId参数从MockHrDataProvider查找员工；
  * 2. 未找到返回失败结果；
- * 3. 找到后对phone、email等敏感字段调用PiiMaskerFactory脱敏；
+ * 3. PII 脱敏由 HrDataProvider 出域口统一处理（phone 掩码、email 明文、idNumber 不返回）；
  * 4. 补充部门名称等关联信息（绩效明细不得进入档案产物，R3.1）；
  * 5. 返回完整的脱敏档案数据。
  * </p>
@@ -32,9 +31,9 @@ public class EmployeeProfileTool implements AgentTool {
 
     public static final String TOOL_NAME = "employee_profile";
 
-    private final MockHrDataProvider dataProvider;
+    private final HrDataProvider dataProvider;
 
-    public EmployeeProfileTool(MockHrDataProvider dataProvider) {
+    public EmployeeProfileTool(HrDataProvider dataProvider) {
         this.dataProvider = dataProvider;
     }
 
@@ -66,16 +65,7 @@ public class EmployeeProfileTool implements AgentTool {
         }
 
         Map<String, Object> profile = new LinkedHashMap<>(employee);
-
-        // 脱敏PII字段
-        if (profile.containsKey("phone")) {
-            profile.put("phone", PiiMaskerFactory.getMasker(PiiType.PHONE)
-                    .mask(profile.get("phone").toString()));
-        }
-        if (profile.containsKey("email")) {
-            profile.put("email", PiiMaskerFactory.getMasker(PiiType.EMAIL)
-                    .mask(profile.get("email").toString()));
-        }
+        // PII 脱敏已在 HrDataProvider 出域口统一完成（phone 掩码、email 明文、idNumber 不返回，R3）
 
         // 补充部门名称
         String deptId = employee.get("deptId").toString();

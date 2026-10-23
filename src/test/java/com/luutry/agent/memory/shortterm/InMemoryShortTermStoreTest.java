@@ -186,4 +186,33 @@ class InMemoryShortTermStoreTest {
         assertEquals(Optional.of("u1"), store.getSessionUserId("s1"));
         assertEquals(Optional.of("u2"), store.getSessionUserId("s2"));
     }
+
+    @Test
+    @DisplayName("addTurn - returns sequential turn numbers")
+    void testAddTurnReturnsSequence() {
+        assertEquals(1, store.addTurn("s1", "u1", ConversationTurn.builder()
+                .userMessage("Q1").assistantMessage("A1").build()));
+        assertEquals(2, store.addTurn("s1", "u1", ConversationTurn.builder()
+                .userMessage("Q2").assistantMessage("A2").build()));
+    }
+
+    @Test
+    @DisplayName("summary - save, read and clear alongside turns")
+    void testSummaryLifecycle() {
+        String sessionId = "session-7";
+        store.addTurn(sessionId, "user-1", ConversationTurn.builder()
+                .userMessage("Q").assistantMessage("A").build());
+
+        store.saveSummary(sessionId, "[Summary] Q | A");
+        assertEquals("[Summary] Q | A", store.getSummary(sessionId));
+
+        store.clearSession(sessionId);
+        assertEquals("", store.getSummary(sessionId));
+    }
+
+    @Test
+    @DisplayName("getSummary - empty for unknown session")
+    void testSummaryEmpty() {
+        assertEquals("", store.getSummary("unknown"));
+    }
 }

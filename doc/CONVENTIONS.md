@@ -34,6 +34,7 @@ com.luutry.agent
 ```
 
 依赖方向：`web → planner → (tool | rag | memory) → repository/external`。
+`preprocessor`（指代消解）可按需依赖 `memory` 的 `ConversationHistoryService` 拉取会话历史，仍为单向无环。
 **禁止反向依赖**，`common` 不得依赖任何业务包。
 
 ## 3. 命名

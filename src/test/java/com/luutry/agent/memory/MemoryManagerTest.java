@@ -220,4 +220,39 @@ class MemoryManagerTest {
         // Recent turns should be limited to window size
         assertTrue(ctx.recentTurns().size() <= AgentConstants.SUMMARY_WINDOW_SIZE);
     }
+
+    @Test
+    @DisplayName("addToSession - turn numbers assigned by store, not caller")
+    void testTurnNumberAssignedByStore() {
+        ConversationTurn first = ConversationTurn.builder()
+                .userMessage("Q1").assistantMessage("A1").build();
+        ConversationTurn second = ConversationTurn.builder()
+                .userMessage("Q2").assistantMessage("A2").build();
+
+        memoryManager.addToSession("session-7", "user-1", first);
+        memoryManager.addToSession("session-7", "user-1", second);
+
+        assertEquals(1, first.getTurnNumber());
+        assertEquals(2, second.getTurnNumber());
+    }
+
+    @Test
+    @DisplayName("summary - stored with turns so a new manager sees the same summary")
+    void testSummarySharedThroughStore() {
+        for (int i = 1; i <= AgentConstants.SUMMARY_WINDOW_SIZE + 2; i++) {
+            memoryManager.addToSession("session-8", "user-1",
+                    ConversationTurn.builder()
+                            .userMessage("Question " + i)
+                            .assistantMessage("Answer " + i)
+                            .build());
+        }
+
+        String summary = memoryManager.getSessionSummary("session-8");
+        assertFalse(summary.isEmpty());
+
+        // 模拟重启/另一实例：仅共享底层 store，摘要必须仍可读
+        MemoryManager recreated = new MemoryManager(shortTermStore, longTermStore,
+                new SlidingWindowSummarizer(), new MemoryDecayScheduler(longTermStore));
+        assertEquals(summary, recreated.getSessionSummary("session-8"));
+    }
 }

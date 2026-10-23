@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 短期记忆存储接口，用于管理会话中的对话轮次。
+ * 短期记忆存储接口，用于管理会话中的对话轮次与摘要。
  * <p>
  * 用途：定义当前会话对话历史的增删改查操作。
  * 处理问题：每个会话需要隔离的、带TTL限制的短期存储，
@@ -17,13 +17,17 @@ import java.util.Optional;
 public interface ShortTermMemoryStore {
 
     /**
-     * 向会话中追加一轮对话。
+     * 向会话中追加一轮对话，轮次号由存储层原子分配。
+     * <p>
+     * 多实例部署时轮次号必须由存储端生成（Redis INCR），否则并发写同一会话会出现重号。
+     * </p>
      *
      * @param sessionId 会话唯一标识符
      * @param userId    归属用户ID，用于隔离
      * @param turn      要添加的对话轮次
+     * @return 本次分配的轮次号（从1开始）；存储不可用时返回0
      */
-    void addTurn(String sessionId, String userId, ConversationTurn turn);
+    int addTurn(String sessionId, String userId, ConversationTurn turn);
 
     /**
      * 获取会话的所有对话轮次。
@@ -51,7 +55,23 @@ public interface ShortTermMemoryStore {
     int getTurnCount(String sessionId);
 
     /**
-     * 清除会话的所有轮次（会话结束或重置）。
+     * 读取会话摘要，与轮次同生命周期存储，避免重启后上下文只剩半截。
+     *
+     * @param sessionId 会话唯一标识符
+     * @return 摘要文本；无摘要或存储不可用时返回空字符串
+     */
+    String getSummary(String sessionId);
+
+    /**
+     * 保存会话摘要。
+     *
+     * @param sessionId 会话唯一标识符
+     * @param summary   摘要文本
+     */
+    void saveSummary(String sessionId, String summary);
+
+    /**
+     * 清除会话的所有轮次与摘要（会话结束或重置）。
      *
      * @param sessionId 会话唯一标识符
      */

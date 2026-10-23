@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 统一记忆管理器，协调三层记忆模型。
@@ -37,13 +38,6 @@ public class MemoryManager {
     private final LongTermMemoryStore longTermStore;
     private final ConversationSummarizer summarizer;
     private final MemoryDecayScheduler decayScheduler;
-
-    /**
-     * 内存中的摘要存储：sessionId -> 摘要文本。
-     * 生产环境中应存储于Redis，与会话数据一起管理。
-     */
-    private final java.util.concurrent.ConcurrentHashMap<String, String> sessionSummaries =
-            new java.util.concurrent.ConcurrentHashMap<>();
 
     public MemoryManager(ShortTermMemoryStore shortTermStore,
                          LongTermMemoryStore longTermStore,
@@ -69,8 +63,10 @@ public class MemoryManager {
         Objects.requireNonNull(userId, "userId must not be null");
         Objects.requireNonNull(turn, "turn must not be null");
 
-        shortTermStore.addTurn(sessionId, userId, turn);
-        log.debug("Added turn #{} to session {} for user {}", turn.getTurnNumber(), sessionId, userId);
+        // 轮次号由存储层分配：Redis 下为原子 INCR，内存下为列表长度，避免并发重号
+        int turnNumber = shortTermStore.addTurn(sessionId, userId, turn);
+        turn.setTurnNumber(turnNumber);
+        log.debug("Added turn #{} to session {} for user {}", turnNumber, sessionId, userId);
 
         // 检查是否需要触发摘要压缩
         int turnCount = shortTermStore.getTurnCount(sessionId);
@@ -131,7 +127,7 @@ public class MemoryManager {
     public SessionContext getSessionContext(String sessionId) {
         Objects.requireNonNull(sessionId, "sessionId must not be null");
 
-        String summary = sessionSummaries.getOrDefault(sessionId, "");
+        String summary = summaryOf(sessionId);
         List<ConversationTurn> recentTurns = shortTermStore.getAllTurns(sessionId);
 
         // 如果已触发摘要压缩，只保留原始轮次（摘要已包含其余内容）
@@ -163,7 +159,6 @@ public class MemoryManager {
      */
     public void clearSession(String sessionId) {
         shortTermStore.clearSession(sessionId);
-        sessionSummaries.remove(sessionId);
         log.debug("Cleared session {} (short-term + summary)", sessionId);
     }
 
@@ -178,13 +173,24 @@ public class MemoryManager {
     }
 
     /**
+     * 获取会话归属用户，用于入口处校验 sessionId 是否属于当前用户。
+     *
+     * @param sessionId 会话标识符
+     * @return 归属用户ID；会话不存在或存储不可用时为空
+     */
+    public Optional<String> getSessionUserId(String sessionId) {
+        Objects.requireNonNull(sessionId, "sessionId must not be null");
+        return shortTermStore.getSessionUserId(sessionId);
+    }
+
+    /**
      * 获取当前会话摘要文本。
      *
      * @param sessionId 会话标识符
      * @return 摘要文本，无摘要时返回空字符串
      */
     public String getSessionSummary(String sessionId) {
-        return sessionSummaries.getOrDefault(sessionId, "");
+        return summaryOf(sessionId);
     }
 
     /**
@@ -207,6 +213,12 @@ public class MemoryManager {
         return decayScheduler.runDecayCycle(userId);
     }
 
+    /** 摘要与轮次同源存储：重启/多实例后仍能读到同一份摘要。 */
+    private String summaryOf(String sessionId) {
+        String summary = shortTermStore.getSummary(sessionId);
+        return summary == null ? "" : summary;
+    }
+
     /**
      * 触发会话摘要压缩：压缩较早的对话轮次，保留近期轮次。
      */
@@ -219,9 +231,9 @@ public class MemoryManager {
         }
 
         // 获取已有摘要并合并
-        String existingSummary = sessionSummaries.getOrDefault(sessionId, "");
+        String existingSummary = summaryOf(sessionId);
         String updatedSummary = summarizer.mergeAndSummarize(existingSummary, split.toSummarize());
-        sessionSummaries.put(sessionId, updatedSummary);
+        shortTermStore.saveSummary(sessionId, updatedSummary);
 
         log.debug("Summarization triggered for session {}: {} turns compressed, summary length={}",
                 sessionId, split.toSummarize().size(), updatedSummary.length());

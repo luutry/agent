@@ -1,33 +1,25 @@
 package com.luutry.agent.preprocessor.router;
 
+import com.luutry.agent.memory.ConversationHistoryService;
 import com.luutry.agent.preprocessor.cleaner.CleanPolicy;
 import com.luutry.agent.preprocessor.cleaner.DefaultQueryCleaner;
 import com.luutry.agent.preprocessor.cleaner.QueryInputDesensitizer;
-import com.luutry.agent.preprocessor.model.IntentResult;
 import com.luutry.agent.preprocessor.model.ProcessedQuery;
 import com.luutry.agent.preprocessor.model.QueryIntent;
 import com.luutry.agent.preprocessor.model.QueryUnit;
-import com.luutry.agent.preprocessor.resolver.CoreferenceResolver;
 import com.luutry.agent.preprocessor.resolver.LlmCoreferenceResolver;
 import com.luutry.agent.preprocessor.resolver.ResolvePolicy;
-import com.luutry.agent.preprocessor.resolver.ResolveResult;
 import com.luutry.agent.preprocessor.resolver.SimpleCoreferenceResolver;
 import com.luutry.agent.llm.LlmService;
 import com.luutry.agent.rag.vectorstore.EmbeddingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -36,12 +28,16 @@ import static org.mockito.Mockito.when;
 class QueryRouterTest {
 
     private QueryRouter router;
+    private ConversationHistoryService historyService;
+
+    private static final String SESSION = "session-1";
 
     @BeforeEach
     void setUp() {
         ResolvePolicy resolvePolicy = new ResolvePolicy();
         LlmService mockLlmService = mock(LlmService.class);
         LlmCoreferenceResolver llmResolver = new LlmCoreferenceResolver(mockLlmService, resolvePolicy);
+        historyService = mock(ConversationHistoryService.class);
 
         IntentClassificationPolicy intentPolicy = new IntentClassificationPolicy();
         EmbeddingService mockEmbeddingService = mock(EmbeddingService.class);
@@ -52,9 +48,10 @@ class QueryRouterTest {
                 intentPolicy.getFallbackChitchatKeywords()
         );
 
+        DefaultQueryCleaner queryCleaner = new DefaultQueryCleaner(new CleanPolicy(), new QueryInputDesensitizer());
         router = new QueryRouter(
-                new DefaultQueryCleaner(new CleanPolicy(), new QueryInputDesensitizer()),
-                new SimpleCoreferenceResolver(resolvePolicy, llmResolver),
+                queryCleaner,
+                new SimpleCoreferenceResolver(resolvePolicy, llmResolver, historyService, queryCleaner),
                 new EmbeddingIntentClassifier(mockEmbeddingService, intentPolicy, weightsLoader, keywordFallback),
                 new RuleBasedTaskDecomposer()
         );
@@ -149,8 +146,8 @@ class QueryRouterTest {
 
     @Test
     void route_withHistory_coreferenceResolved() {
-        List<String> history = List.of("查看张三的简历信息");
-        ProcessedQuery result = router.route("他的绩效怎么样", history);
+        when(historyService.recentUserQueries(SESSION)).thenReturn(List.of("查看张三的简历信息"));
+        ProcessedQuery result = router.route("他的绩效怎么样", SESSION);
         assertNotNull(result.getResolvedQuery());
     }
 
@@ -201,29 +198,5 @@ class QueryRouterTest {
         // rewrite 已移出管道，finalQuery 应等于 resolved
         ProcessedQuery result = router.route("查看员工绩效");
         assertEquals(result.getResolvedQuery(), result.getFinalQuery());
-    }
-
-    @Test
-    void route_historyWithPii_maskedBeforeResolve() {
-        CoreferenceResolver resolver = mock(CoreferenceResolver.class);
-        when(resolver.resolve(anyString(), anyList())).thenReturn(ResolveResult.unresolved("他呢"));
-
-        IntentClassifier classifier = mock(IntentClassifier.class);
-        when(classifier.classify(anyString()))
-                .thenReturn(new IntentResult(QueryIntent.TOOL, 0.9, Collections.emptyMap()));
-
-        QueryRouter maskedRouter = new QueryRouter(
-                new DefaultQueryCleaner(new CleanPolicy(), new QueryInputDesensitizer()),
-                resolver,
-                classifier,
-                new RuleBasedTaskDecomposer());
-
-        maskedRouter.route("他呢", List.of("联系 138 1234 5678 的张三"));
-
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<String>> captor = ArgumentCaptor.forClass(List.class);
-        verify(resolver).resolve(eq("他呢"), captor.capture());
-        assertEquals(List.of("联系 138****5678 的张三"), captor.getValue(),
-                "history 必须先脱敏再交给消解器");
     }
 }

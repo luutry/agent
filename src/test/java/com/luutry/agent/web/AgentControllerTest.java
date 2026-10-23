@@ -1,6 +1,7 @@
 package com.luutry.agent.web;
 
 import com.luutry.agent.common.model.dto.ChatRequest;
+import com.luutry.agent.common.exception.ErrorCodes;
 import com.luutry.agent.common.model.vo.ApiResponse;
 import com.luutry.agent.common.model.vo.ChatResponse;
 import com.luutry.agent.aggregate.ContextAggregator;
@@ -19,7 +20,8 @@ import com.luutry.agent.preprocessor.model.ProcessedQuery;
 import com.luutry.agent.preprocessor.model.QueryIntent;
 import com.luutry.agent.preprocessor.router.QueryRouter;
 import com.luutry.agent.security.auth.UserContext;
-import com.luutry.agent.security.auth.UserDirectory;
+import com.luutry.agent.security.auth.UserContextHolder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,9 +31,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -54,9 +58,6 @@ class AgentControllerTest {
     @Mock
     private MemoryManager memoryManager;
 
-    @Mock
-    private UserDirectory userDirectory;
-
     private ContextAggregator contextAggregator;
     private AgentController controller;
 
@@ -64,9 +65,14 @@ class AgentControllerTest {
     void setUp() {
         contextAggregator = new DefaultContextAggregator();
         controller = new AgentController(queryRouter, plannerService, contextAggregator,
-                selfCritiqueService, memoryManager, userDirectory);
-        lenient().when(userDirectory.resolve(anyString())).thenReturn(
-                UserContext.builder().userId("user1").managedOrgIds(List.of("DEPT_TECH")).build());
+                selfCritiqueService, memoryManager);
+        // 身份由 SSO 过滤器装配，单测直接模拟已认证上下文
+        UserContextHolder.set(UserContext.builder().userId("user1").managedOrgIds(List.of("DEPT_TECH")).build());
+    }
+
+    @AfterEach
+    void tearDown() {
+        UserContextHolder.clear();
     }
 
     @Test
@@ -165,63 +171,11 @@ class AgentControllerTest {
     }
 
     @Test
-    void chat_withHistory_passesHistoryToRouter() {
+    void chat_delegatesQueryAndSessionIdToRouter() {
         ChatRequest request = ChatRequest.builder()
                 .query("他们的绩效")
                 .userId("user1")
                 .sessionId("session1")
-                .history(List.of("查看技术部人员"))
-                .build();
-
-        ProcessedQuery processedQuery = new ProcessedQuery("他们的绩效");
-        processedQuery.setIntent(QueryIntent.TOOL);
-        when(queryRouter.route(eq("他们的绩效"), eq(List.of("查看技术部人员")))).thenReturn(processedQuery);
-
-        AgentResponse agentResponse = AgentResponse.success("技术部绩效均为B级以上", "task1", 2);
-        when(plannerService.plan(any(), anyString(), anyString())).thenReturn(agentResponse);
-
-        // Mock session context
-        MemoryManager.SessionContext emptySessionCtx = new MemoryManager.SessionContext("", Collections.emptyList(), null);
-        when(memoryManager.getSessionContext(anyString())).thenReturn(emptySessionCtx);
-
-        CritiqueResult critique = CritiqueResult.pass();
-        when(selfCritiqueService.critique(any(), any(), any())).thenReturn(critique);
-
-        ApiResponse<ChatResponse> result = controller.chat(request);
-
-        assertTrue(result.isSuccess());
-        verify(queryRouter).route("他们的绩效", List.of("查看技术部人员"));
-    }
-
-    @Test
-    void chat_memoryHistory_preferredAndReversed() {
-        ChatRequest request = ChatRequest.builder()
-                .query("他们的绩效")
-                .userId("user1")
-                .sessionId("session1")
-                .history(List.of("客户端伪造的一轮"))
-                .build();
-
-        ProcessedQuery processedQuery = new ProcessedQuery("他们的绩效");
-        processedQuery.setIntent(QueryIntent.TOOL);
-        stubSuccessfulPipeline(processedQuery);
-
-        when(memoryManager.getRecentTurns("session1", 3)).thenReturn(List.of(
-                ConversationTurn.builder().turnNumber(1).userMessage("第一轮").build(),
-                ConversationTurn.builder().turnNumber(2).userMessage("第二轮").build()));
-
-        controller.chat(request);
-
-        verify(queryRouter).route(eq("他们的绩效"), eq(List.of("第二轮", "第一轮")));
-    }
-
-    @Test
-    void chat_clientHistory_normalizedToNewestFirst() {
-        ChatRequest request = ChatRequest.builder()
-                .query("他们的绩效")
-                .userId("user1")
-                .sessionId("session1")
-                .history(List.of("最旧", "中间", "最新"))
                 .build();
 
         ProcessedQuery processedQuery = new ProcessedQuery("他们的绩效");
@@ -230,7 +184,9 @@ class AgentControllerTest {
 
         controller.chat(request);
 
-        verify(queryRouter).route(eq("他们的绩效"), eq(List.of("最新", "中间", "最旧")));
+        // 历史不再经 Controller 中转：只交 query 与 sessionId，历史由消解器按需拉取
+        verify(queryRouter).route(eq("他们的绩效"), eq("session1"));
+        verify(memoryManager, never()).getRecentTurns(anyString(), anyInt());
     }
 
     @Test
@@ -244,13 +200,11 @@ class AgentControllerTest {
         ProcessedQuery processedQuery = new ProcessedQuery("查看技术部人员");
         processedQuery.setIntent(QueryIntent.TOOL);
         stubSuccessfulPipeline(processedQuery);
-        when(memoryManager.getSessionTurnCount("session1")).thenReturn(2);
 
         controller.chat(request);
 
         ArgumentCaptor<ConversationTurn> captor = ArgumentCaptor.forClass(ConversationTurn.class);
         verify(memoryManager).addToSession(eq("session1"), eq("user1"), captor.capture());
-        assertEquals(3, captor.getValue().getTurnNumber());
         assertEquals("查看技术部人员", captor.getValue().getUserMessage());
         assertEquals("答案", captor.getValue().getAssistantMessage());
     }
@@ -350,6 +304,140 @@ class AgentControllerTest {
         assertTrue(result.isSuccess());
         assertEquals(1, result.getData().getIssues().size());
         assertTrue(result.getData().getIssues().get(0).contains("截断"));
+    }
+
+    @Test
+    void chat_noAuthenticatedContext_returnsUnauthorized() {
+        UserContextHolder.clear();
+        ChatRequest request = ChatRequest.builder()
+                .query("查看技术部人员")
+                .userId("user1")
+                .sessionId("session1")
+                .build();
+
+        ApiResponse<ChatResponse> result = controller.chat(request);
+
+        assertFalse(result.isSuccess());
+        assertEquals(ErrorCodes.AUTH_FAILED.getCode(), result.getCode());
+        verifyNoInteractions(plannerService);
+    }
+
+    @Test
+    void chat_bodyUserIdMismatchToken_returnsPermissionDenied() {
+        // 令牌身份为 user1（setUp 已装配），请求体声明 user2 → 不一致，拒绝
+        ChatRequest request = ChatRequest.builder()
+                .query("查看技术部人员")
+                .userId("user2")
+                .sessionId("session1")
+                .build();
+
+        ApiResponse<ChatResponse> result = controller.chat(request);
+
+        assertFalse(result.isSuccess());
+        assertEquals(ErrorCodes.PERMISSION_DENIED.getCode(), result.getCode());
+        verifyNoInteractions(plannerService);
+    }
+
+    @Test
+    void chat_blankSessionId_generatesAndReturnsTicket() {
+        ChatRequest request = ChatRequest.builder()
+                .query("查看技术部人员")
+                .userId("user1")
+                .build();
+
+        ProcessedQuery processedQuery = new ProcessedQuery("查看技术部人员");
+        processedQuery.setIntent(QueryIntent.TOOL);
+        stubSuccessfulPipeline(processedQuery);
+
+        ApiResponse<ChatResponse> result = controller.chat(request);
+
+        assertTrue(result.isSuccess());
+        String sessionId = result.getData().getSessionId();
+        assertNotNull(sessionId);
+        assertTrue(sessionId.startsWith("sess_"), "服务端签发的会话票据应带 sess_ 前缀");
+        verify(plannerService).plan(any(), eq("user1"), eq(sessionId));
+        verify(memoryManager).addToSession(eq(sessionId), eq("user1"), any());
+    }
+
+    @Test
+    void chat_invalidSessionIdFormat_rejected() {
+        ChatRequest request = ChatRequest.builder()
+                .query("查看技术部人员")
+                .userId("user1")
+                .sessionId("bad:id")
+                .build();
+
+        ApiResponse<ChatResponse> result = controller.chat(request);
+
+        assertFalse(result.isSuccess());
+        assertEquals(ErrorCodes.PARAM_ERROR.getCode(), result.getCode());
+        verifyNoInteractions(plannerService);
+    }
+
+    @Test
+    void chat_sessionOwnedByAnotherUser_rejected() {
+        ChatRequest request = ChatRequest.builder()
+                .query("查看技术部人员")
+                .userId("user1")
+                .sessionId("session1")
+                .build();
+        when(memoryManager.getSessionUserId("session1")).thenReturn(Optional.of("user2"));
+
+        ApiResponse<ChatResponse> result = controller.chat(request);
+
+        assertFalse(result.isSuccess());
+        assertEquals(ErrorCodes.PERMISSION_DENIED.getCode(), result.getCode());
+        verifyNoInteractions(queryRouter);
+        verifyNoInteractions(plannerService);
+    }
+
+    @Test
+    void chat_ownershipCheckFails_degradesInsteadOfBreaking() {
+        ChatRequest request = ChatRequest.builder()
+                .query("查看技术部人员")
+                .userId("user1")
+                .sessionId("session1")
+                .build();
+
+        ProcessedQuery processedQuery = new ProcessedQuery("查看技术部人员");
+        processedQuery.setIntent(QueryIntent.TOOL);
+        stubSuccessfulPipeline(processedQuery);
+        when(memoryManager.getSessionUserId("session1"))
+                .thenThrow(new RuntimeException("memory down"));
+
+        ApiResponse<ChatResponse> result = controller.chat(request);
+
+        assertTrue(result.isSuccess(), "会话存储故障不应阻断对话");
+    }
+
+    @Test
+    void resetSession_clearsSession() {
+        when(memoryManager.getSessionUserId("session1")).thenReturn(Optional.of("user1"));
+
+        ApiResponse<Void> result = controller.resetSession("session1");
+
+        assertTrue(result.isSuccess());
+        verify(memoryManager).clearSession("session1");
+    }
+
+    @Test
+    void resetSession_otherUser_rejected() {
+        when(memoryManager.getSessionUserId("session1")).thenReturn(Optional.of("user2"));
+
+        ApiResponse<Void> result = controller.resetSession("session1");
+
+        assertFalse(result.isSuccess());
+        assertEquals(ErrorCodes.PERMISSION_DENIED.getCode(), result.getCode());
+        verify(memoryManager, never()).clearSession(any());
+    }
+
+    @Test
+    void resetSession_invalidId_rejected() {
+        ApiResponse<Void> result = controller.resetSession("bad:id");
+
+        assertFalse(result.isSuccess());
+        assertEquals(ErrorCodes.PARAM_ERROR.getCode(), result.getCode());
+        verify(memoryManager, never()).clearSession(any());
     }
 
     @Test

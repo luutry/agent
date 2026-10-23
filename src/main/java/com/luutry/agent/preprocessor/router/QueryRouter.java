@@ -12,7 +12,6 @@ import com.luutry.agent.preprocessor.resolver.ResolveResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,11 +44,11 @@ public class QueryRouter {
     /**
      * 通过完整预处理管道处理原始用户查询。
      *
-     * @param rawQuery     原始用户输入
-     * @param historyTurns 用于指代消解的近期对话轮次（最新在前）
+     * @param rawQuery  原始用户输入
+     * @param sessionId 会话标识，供指代消解器按需拉取历史；为空时退化为单轮
      * @return 带意图、实体和子任务的完整预处理查询
      */
-    public ProcessedQuery route(String rawQuery, List<String> historyTurns) {
+    public ProcessedQuery route(String rawQuery, String sessionId) {
         ProcessedQuery result = new ProcessedQuery(rawQuery);
 
         // 步骤 1：清洗（归一化 / 截断）
@@ -71,15 +70,8 @@ public class QueryRouter {
         }
 
         // 步骤 2：指代消解
-        // 历史与当前输入走同一清洗管道：否则 history 里的 PII 会被消解器原样拼回 finalQuery，
-        // 绕过入站脱敏进入 Prompt（R3）
-        List<String> history = historyTurns == null ? Collections.emptyList()
-                : historyTurns.stream()
-                        .filter(Objects::nonNull)
-                        .map(turn -> queryCleaner.clean(turn).getCleanedText())
-                        .filter(turn -> !turn.isBlank())
-                        .toList();
-        ResolveResult resolveResult = coreferenceResolver.resolve(cleaned, history);
+        // 历史不再由本层传入：消解器自行注入 ConversationHistoryService，按需拉取并清洗（R3）
+        ResolveResult resolveResult = coreferenceResolver.resolve(cleaned, sessionId);
         String resolved = resolveResult.getResolvedText();
         // 消解文本可能来自 LLM 或规则拼接：同样要过清洗（截断上限、数字脱敏、噪声清理），
         // 否则它是一条绕过入站清洗进入 Prompt 的旁路
@@ -172,9 +164,9 @@ public class QueryRouter {
     }
 
     /**
-     * 不带对话历史的便捷重载方法。
+     * 无会话上下文的便捷重载方法。
      */
     public ProcessedQuery route(String rawQuery) {
-        return route(rawQuery, Collections.emptyList());
+        return route(rawQuery, null);
     }
 }

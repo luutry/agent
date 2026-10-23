@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Agent对话API的请求DTO。
  * <p>
  * 用途：封装Agent对话端点的用户输入。
- * 处理问题：需要结构化的请求格式，包含用户身份、会话追踪以及可选的多轮对话历史。
- * 处理方式：包含query（必填）、userId、sessionId和历史对话轮次。
+ * 处理问题：需要结构化的请求格式，包含用户身份与会话追踪。
+ * 处理方式：包含query（必填）、userId、sessionId；多轮历史以服务端会话记忆为准，客户端不再传历史，
+ * sessionId 缺省由服务端签发。
  * </p>
  */
 @Data
@@ -33,20 +31,9 @@ public class ChatRequest {
     private String userId;
 
     /**
-     * 会话标识，用于对话连续性
+     * 会话标识，用于对话连续性（可选：缺省由服务端签发并随响应返回）
      */
     private String sessionId;
-
-    /**
-     * 近期对话历史，按时间顺序排列（最旧在前），每条为之前轮次的用户消息。
-     * <p>
-     * 服务端会反转成"最新在前"后交给指代消解，且只取最近
-     * {@code AgentConstants.COREFERENCE_HISTORY_WINDOW} 轮。
-     * 该字段属于客户端不可信上下文：会话记忆中有数据时以记忆为准。
-     * </p>
-     */
-    @Builder.Default
-    private List<String> history = Collections.emptyList();
 
     /**
      * 校验请求是否包含必填字段。
@@ -55,7 +42,6 @@ public class ChatRequest {
      */
     public boolean isValid() {
         return query != null && !query.isBlank()
-                && userId != null && !userId.isBlank()
-                && sessionId != null && !sessionId.isBlank();
+                && userId != null && !userId.isBlank();
     }
 }

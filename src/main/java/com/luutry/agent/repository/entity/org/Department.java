@@ -22,6 +22,9 @@ public class Department {
     private Integer sortOrder;
     private Integer headCount;
     private Integer currentStaff;
+    private java.math.BigDecimal turnoverRate;
+    private java.math.BigDecimal probationPassRate;
+    private String headEmployeeCode;
     private Integer status;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

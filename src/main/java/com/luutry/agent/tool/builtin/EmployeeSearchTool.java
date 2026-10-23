@@ -1,5 +1,6 @@
 package com.luutry.agent.tool.builtin;
 
+import com.luutry.agent.repository.HrDataProvider;
 import com.luutry.agent.security.auth.UserContext;
 import com.luutry.agent.security.auth.UserContextHolder;
 import com.luutry.agent.tool.executor.AgentTool;
@@ -29,9 +30,9 @@ public class EmployeeSearchTool implements AgentTool {
 
     public static final String TOOL_NAME = "employee_search";
 
-    private final MockHrDataProvider dataProvider;
+    private final HrDataProvider dataProvider;
 
-    public EmployeeSearchTool(MockHrDataProvider dataProvider) {
+    public EmployeeSearchTool(HrDataProvider dataProvider) {
         this.dataProvider = dataProvider;
     }
 
